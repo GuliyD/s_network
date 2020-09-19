@@ -1,0 +1,25 @@
+{% extends "base/base.html" %}
+
+{% block head_title %}Register{% endblock %}
+
+{% block auth %}
+<p>You are logged in</p>
+<a href="{% url 'home' %}">Home</a>
+{% endblock %}
+
+
+{% block not_auth %}
+<h1>Registration</h1>
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <p>{{ field.label_tag }}
+            {{ field }}</p>
+        {% for error in field.errors %}
+        <p style="color: red">{{ error }}</p>
+        {% endfor %}
+    {% endfor %}
+
+    <button type="submit">Register</button>
+</form>
+{% endblock %}

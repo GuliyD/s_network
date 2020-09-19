@@ -1,0 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block head_title %}base title{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/style.css' %}">
+</head>
+<body>
+{% if user.is_authenticated %}
+{% block auth %}
+
+{% endblock %}
+{% else %}
+{% block not_auth %}
+<a href="{% url 'register' %}">Register</a><br>
+<a href="{% url 'login' %}">Login</a>
+{% endblock %}
+{% endif %}
+</body>
+</html>
+<br>
+<br>
+<br>
+<br>
+<br>
+
