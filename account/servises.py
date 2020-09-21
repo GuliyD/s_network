@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, logout, login
+from django.contrib.auth import authenticate, login
 
 
 def base_form_servise(
@@ -7,12 +7,15 @@ def base_form_servise(
         form_class,
         template_path_to_render: str,
         redirect_to: str,
+
         is_login=False,
-        name_of_username_pole_to_register=None,
-        name_of_password_pole_to_register=None,
-        is_registration=False
+
+        is_registration=False,
+
+        is_update_current_user=False,
 ):
-    """returns function render or redirect"""
+    """returns render or redirect, can't update model,
+    can register user, login, create new pole in ModelForm"""
     is_redirect = False
     if request.POST:
         form = form_class(request.POST)
@@ -21,10 +24,22 @@ def base_form_servise(
                 user = form.save()
                 login(request, user)
             elif is_login:
-                username = form.cleaned_data(name_of_username_pole_to_register)
-                password = form.cleaned_data(name_of_password_pole_to_register)
-                user = authenticate(request, username, password)
+                username = form.cleaned_data.get('email')
+                password = form.cleaned_data.get('password')
+                user = authenticate(request, username=username, password=password)
                 login(request, user)
+            elif is_update_current_user:
+                username_to_update = form.cleaned_data.get('username')
+                password_to_update = form.cleaned_data.get('password')
+                email_to_update = form.cleaned_data.get('email')
+                profile_photo_to_update = form.cleaned_data.get('profile_photo')
+                update_current_user(
+                    request,
+                    username=username_to_update,
+                    password=password_to_update,
+                    email=email_to_update,
+                    profile_photo=profile_photo_to_update
+                )
             else:
                 form.save()
             redirect_return = redirect(redirect_to)
@@ -37,3 +52,16 @@ def base_form_servise(
     else:
         response = render_return
     return response
+
+
+def update_current_user(request, username=None, password=None, email=None, profile_photo=None):
+    if username:
+        request.user.update(username=username)
+    if password:
+        request.user.set_password(password)
+    if email:
+        request.user.update(email=email)
+    if profile_photo:
+        request.user.update(profile_photo=profile_photo)
+
+    return 'done'

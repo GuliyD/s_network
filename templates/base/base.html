@@ -8,21 +8,16 @@
     <link rel="stylesheet" type="text/css" href="{% static '/css/style.css' %}">
 </head>
 <body>
-{% if user.is_authenticated %}
-{% block auth %}
 
+{% block content %}
 {% endblock %}
-{% else %}
-{% block not_auth %}
-<a href="{% url 'register' %}">Register</a><br>
-<a href="{% url 'login' %}">Login</a>
+
+{% block for_form %}
 {% endblock %}
-{% endif %}
+
+{% block form %}
+{% endblock %}
+
+
+
 </body>
-</html>
-<br>
-<br>
-<br>
-<br>
-<br>
-

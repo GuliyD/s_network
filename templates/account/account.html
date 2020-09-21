@@ -1,0 +1,12 @@
+{% extends 'base/base_form_for_media.html' %}
+
+{% block content %}
+{% if user.profile_photo %}
+    {{ user.profile_photo }}
+{% else %}
+    {% block form %}
+    {% endblock %}
+
+        {% block form_submit_button_name %}add photo{% endblock %}
+{% endif %}
+{% endblock %}

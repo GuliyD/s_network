@@ -1,9 +1,9 @@
 {% extends "base/base_form.html" %}
 {% if not user.is_authenticated %}
-{% block head_title %}Register{% endblock %}
+{% block head_title %}Login{% endblock %}
 
 
-{% block submit_button_name %}Register{% endblock %}
+{% block submit_button_name %}Login{% endblock %}
 {% else %}
     <a href="account:logout">logout</a>
 {% endif %}

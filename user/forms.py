@@ -4,7 +4,6 @@ from user.models import User
 
 
 class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(max_length=60, required=True)
 
     class Meta:
         model = User
