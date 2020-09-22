@@ -1,12 +1,23 @@
-{% extends 'base/base_form_for_media.html' %}
+{% extends 'base/base.html' %}
 
 {% block content %}
-{% if user.profile_photo %}
-    {{ user.profile_photo }}
-{% else %}
-    {% block form %}
-    {% endblock %}
+{% if user.profile.photo %}
+<p><img src="{{ user.profile.photo.url }}" width="200"></p>
+<p><a href="{% url 'account:change_profile_photo' %}">Change photo</a></p>
 
-        {% block form_submit_button_name %}add photo{% endblock %}
+{% else %}
+<p><a href="{% url 'account:add_profile_photo' %}">add photo</a></p>
 {% endif %}
+    <p>{{ user.username }}</p>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+<p><a href="{% url 'account:add_work' %}">add image</a></p>
+
+{% for work in user.works.all %}
+    <p><img src="{{ work.photo.url }}" width="200"></p>
+{{ work.url }}
+{% endfor %}
+
 {% endblock %}

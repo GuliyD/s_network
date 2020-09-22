@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from .models import ProfileModel, UserWorkModel
+from .forms import UserPhotoForm
+from user.models import User
 
 
-def base_form_servise(
+def base_form_service(
         request,
         form_class,
         template_path_to_render: str,
@@ -11,11 +14,9 @@ def base_form_servise(
         is_login=False,
 
         is_registration=False,
-
-        is_update_current_user=False,
 ):
     """returns render or redirect, can't update model,
-    can register user, login, create new pole in ModelForm"""
+    can register user, login, create new poles in ModelForm"""
     is_redirect = False
     if request.POST:
         form = form_class(request.POST)
@@ -28,18 +29,6 @@ def base_form_servise(
                 password = form.cleaned_data.get('password')
                 user = authenticate(request, username=username, password=password)
                 login(request, user)
-            elif is_update_current_user:
-                username_to_update = form.cleaned_data.get('username')
-                password_to_update = form.cleaned_data.get('password')
-                email_to_update = form.cleaned_data.get('email')
-                profile_photo_to_update = form.cleaned_data.get('profile_photo')
-                update_current_user(
-                    request,
-                    username=username_to_update,
-                    password=password_to_update,
-                    email=email_to_update,
-                    profile_photo=profile_photo_to_update
-                )
             else:
                 form.save()
             redirect_return = redirect(redirect_to)
@@ -54,14 +43,62 @@ def base_form_servise(
     return response
 
 
-def update_current_user(request, username=None, password=None, email=None, profile_photo=None):
-    if username:
-        request.user.update(username=username)
-    if password:
-        request.user.set_password(password)
-    if email:
-        request.user.update(email=email)
-    if profile_photo:
-        request.user.update(profile_photo=profile_photo)
+def add_profile_photo_service(request):
+    try:
+        if request.user.profile.photo:
+            return redirect('account:change_profile_photo')
+    except ProfileModel.DoesNotExist:
+        pass
 
-    return 'done'
+    if request.POST:
+        form = UserPhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = request.user
+            img = form.cleaned_data.get("photo")
+            try:
+                profile = request.user.profile
+                profile.photo = img
+            except ProfileModel.DoesNotExist:
+                profile = ProfileModel.objects.create(
+                    user=request.user,
+                    photo=img
+                )
+            profile.save()
+            return redirect('account:account')
+    else:
+        form = UserPhotoForm()
+    return render(request, 'account/add_profile_photo.html', {'form': form})
+
+
+def change_profile_photo_service(request):
+    if request.POST:
+        form = UserPhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            profile = request.user.profile
+            profile.photo.delete()
+            profile.photo = request.FILES['photo']
+            profile.save()
+            return redirect('account:account')
+    else:
+        form = UserPhotoForm()
+    return render(request, 'account/change_profile_photo.html', {'form': form})
+
+
+def add_work_service(request):
+    if request.POST:
+        form = UserPhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = request.user
+            img = request.FILES['photo']
+            UserWorkModel.objects.create(
+                user=user,
+                photo=img
+            )
+            return redirect('account:account')
+    else:
+        form = UserPhotoForm()
+    return render(request, 'account/change_profile_photo.html', {'form': form})
+
+
+def get_all_current_user_works(request):
+    return request.user.works.all()

@@ -1,11 +1,12 @@
 from django import forms
 from user.models import User
+from .models import ProfileModel
 
 
 class UserPhotoForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['profile_photo']
+        model = ProfileModel
+        fields = ['photo']
 
 
 class LoginForm(forms.Form):
