@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base/base.html' %}
 
-</body>
-</html>
+{% block content %}
+{% for work in works %}
+<p>{{ work.user.username }}</p>
+<img src="{{ work.photo.url }}" width="200">
+{{ work.like_value }}
+{% endfor %}
+{% endblock %}

@@ -102,3 +102,10 @@ def add_work_service(request):
 
 def get_all_current_user_works(request):
     return request.user.works.all()
+
+
+def home_page_service(request):
+    works = UserWorkModel.objects.all()
+    for i in works:
+        print(i.photo.url)
+    return render(request, 'account/home.html', {'works': works})

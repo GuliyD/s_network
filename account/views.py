@@ -10,7 +10,8 @@ from .servises import (
     add_profile_photo_service,
     change_profile_photo_service,
     add_work_service,
-    get_all_current_user_works
+    get_all_current_user_works,
+    home_page_service
 )
 
 
@@ -25,7 +26,8 @@ def create_user_view(request):
 
 
 def home(request):
-    return HttpResponse('rabotaet')
+    response = home_page_service(request)
+    return response
 
 
 def logout_view(request):
