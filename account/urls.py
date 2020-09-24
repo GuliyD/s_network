@@ -10,5 +10,7 @@ urlpatterns = [
     path('login', views.login_view, name='login'),
     path('change_profile_photo', views.change_profile_photo_view, name='change_profile_photo'),
     path('add_profile_photo', views.add_profile_photo_view, name='add_profile_photo'),
-    path('add_work', views.add_work_view, name='add_work')
+    path('add_work', views.add_work_view, name='add_work'),
+    path('like/<int:work_id>', views.like_view, name='like'),
+    path('comment/<int:work>', views.comment_view, name='comment')
 ]
