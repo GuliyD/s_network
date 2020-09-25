@@ -1,0 +1,12 @@
+{% extends "base/base_form.html" %}
+
+{% block head_title %}Login{% endblock %}
+
+{% block submit_button_name %}Login{% endblock %}
+
+{% block content %}
+{% for comment in comments %}
+user: <p>{{ comment.user.username }}</p>
+<p>{{ comment.comment }}</p>
+{% endfor %}
+{% endblock %}

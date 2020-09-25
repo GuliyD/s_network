@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import authenticate, logout, login
 from user.forms import RegistrationForm
-from .forms import UserPhotoForm, LoginForm
-from .models import ProfileModel, UserWorkModel
+from .forms import UserPhotoForm, LoginForm, CommentForm
+from .models import UserWorkModel, CommentModel
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .servises import (
@@ -66,17 +66,19 @@ def login_view(request):
     return response
 
 
+@login_required
 def add_work_view(request):
     response = add_work_service(request)
     return response
 
 
+@login_required
 def like_view(request, work_id):
     try:
         work = UserWorkModel.objects.get(id=work_id)
     except UserWorkModel.DoesNotExist:
         return redirect('account:home')
-    if work.like_value == 'Like':
+    if not request.user in [com for com in work.liked.all()]:
         work.liked.add(request.user)
         work.like_value = 'Unlike'
         work.save()
@@ -85,3 +87,21 @@ def like_view(request, work_id):
         work.like_value = 'Like'
         work.save()
     return redirect('home')
+
+
+@login_required
+def comment_view(request, work_id):
+    try:
+        work = request.user.works.get(id=work_id)
+        comments = work.comments.all()
+    except CommentModel.DoesNotExist:
+        comments = []
+    if request.POST:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.cleaned_data.get('comment')
+            work.comments.create(comment=comment, user=request.user)
+            return render(request, 'account/comment.html', {'form': CommentForm(), 'comments': comments})
+    else:
+        form = CommentForm()
+    return render(request, 'account/comment.html', {'form': form, 'comments': comments})

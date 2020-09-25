@@ -12,3 +12,7 @@ class UserPhotoForm(forms.ModelForm):
 class LoginForm(forms.Form):
     email = forms.EmailField()
     password = forms.CharField(label="Password", strip=False, widget=forms.PasswordInput)
+
+
+class CommentForm(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea)

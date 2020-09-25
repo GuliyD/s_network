@@ -33,6 +33,7 @@ class UserWorkModel(models.Model):
 
 
 class CommentModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     work = models.ForeignKey(UserWorkModel, on_delete=models.CASCADE, related_name='comments')
     comment = models.TextField()
     created = models.DateTimeField(auto_now=True)
