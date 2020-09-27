@@ -5,13 +5,15 @@ from .forms import UserPhotoForm, LoginForm, CommentForm
 from .models import UserWorkModel, CommentModel
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from .servises import (
+from .services import (
     base_form_service,
     add_profile_photo_service,
     change_profile_photo_service,
     add_work_service,
     get_all_current_user_works,
-    home_page_service
+    home_page_service,
+    comment_view_service,
+    like_view_service
 )
 
 
@@ -74,34 +76,10 @@ def add_work_view(request):
 
 @login_required
 def like_view(request, work_id):
-    try:
-        work = UserWorkModel.objects.get(id=work_id)
-    except UserWorkModel.DoesNotExist:
-        return redirect('account:home')
-    if not request.user in [com for com in work.liked.all()]:
-        work.liked.add(request.user)
-        work.like_value = 'Unlike'
-        work.save()
-    else:
-        work.liked.remove(request.user)
-        work.like_value = 'Like'
-        work.save()
-    return redirect('home')
-
+    response = like_view_service(request, work_id)
+    return response
 
 @login_required
 def comment_view(request, work_id):
-    try:
-        work = request.user.works.get(id=work_id)
-        comments = work.comments.all()
-    except CommentModel.DoesNotExist:
-        comments = []
-    if request.POST:
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.cleaned_data.get('comment')
-            work.comments.create(comment=comment, user=request.user)
-            return render(request, 'account/comment.html', {'form': CommentForm(), 'comments': comments})
-    else:
-        form = CommentForm()
-    return render(request, 'account/comment.html', {'form': form, 'comments': comments})
+    response = comment_view_service(request, work_id, CommentForm)
+    return response

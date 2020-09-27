@@ -106,6 +106,47 @@ def get_all_current_user_works(request):
 
 def home_page_service(request):
     works = UserWorkModel.objects.all()
-    for i in works:
-        print(i.photo.url)
-    return render(request, 'account/home.html', {'works': works})
+    works_and_likes = get_works_and_likes(request, works)
+    return render(request, 'account/home.html', {'works_and_likes': works_and_likes})
+
+
+def get_works_and_likes(request, works):
+    users_in_works = [i.liked for i in works]
+    print(users_in_works)
+    likes_for_works = list(map(lambda users: 'Unlike' if request.user in users.all() else 'Like', users_in_works))
+    works_and_likes = list(zip(works, likes_for_works))
+    return works_and_likes
+
+
+def comment_view_service(request, work_id, form_class):
+    work = UserWorkModel.objects.get(id=work_id)
+    try:
+        comments = work.comments.all()
+    except UserWorkModel.DoesNotExist:
+        comments = []
+    if request.POST:
+        form = form_class(request.POST)
+        if form.is_valid():
+            comment = form.cleaned_data.get('comment')
+            work.comments.create(comment=comment, user=request.user)
+            return render(request, 'account/comment.html', {'form': form_class(), 'comments': comments})
+    else:
+        form = form_class()
+    return render(request, 'account/comment.html', {'form': form, 'comments': comments})
+
+
+def like_view_service(request, work_id):
+    try:
+        work = UserWorkModel.objects.get(id=work_id)
+    except UserWorkModel.DoesNotExist:
+        return redirect('account:home')
+    if not(request.user in [com for com in work.liked.all()]):
+        print('like')
+        work.liked.add(request.user)
+        work.save()
+    else:
+        work.liked.remove(request.user)
+        work.save()
+    works = UserWorkModel.objects.all()
+    works_and_likes = get_works_and_likes(request, works)
+    return render(request, 'account/home.html', {'works_and_likes': works_and_likes})

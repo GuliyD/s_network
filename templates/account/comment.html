@@ -6,7 +6,7 @@
 
 {% block content %}
 {% for comment in comments %}
-user: <p>{{ comment.user.username }}</p>
+user: {{ comment.user.username }}<br/>
 <p>{{ comment.comment }}</p>
 {% endfor %}
 {% endblock %}
