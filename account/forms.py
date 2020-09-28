@@ -14,10 +14,5 @@ class UserPhotoForm(forms.ModelForm):
         fields = ['photo']
 
 
-class LoginForm(forms.Form):
-    email = forms.EmailField()
-    password = forms.CharField(label="Password", strip=False, widget=forms.PasswordInput)
-
-
 class CommentForm(forms.Form):
     comment = forms.CharField(widget=forms.Textarea)
