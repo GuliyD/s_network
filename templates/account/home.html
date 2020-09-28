@@ -4,6 +4,7 @@
 
 {% for work, like in works_and_likes %}
 <p>{{ work.user.username }}</p>
+<p>{{ work.work_name }}</p>
 <img src="{{ work.photo.url }}" width="200">
 <a href="{% url 'account:like' work.id %}">{{ like }}</a>     <h5>{{ work.num_likes }}</h5>
 <p><a href="{% url 'account:comment' work.id %}"> comments </a></p>

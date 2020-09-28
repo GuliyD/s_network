@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .models import ProfileModel, UserWorkModel
-from .forms import UserPhotoForm
+from .forms import UserPhotoForm, WorkForm
 from user.models import User
 
 
@@ -86,18 +86,20 @@ def change_profile_photo_service(request):
 
 def add_work_service(request):
     if request.POST:
-        form = UserPhotoForm(request.POST, request.FILES)
+        form = WorkForm(request.POST, request.FILES)
         if form.is_valid():
+            work_name = form.cleaned_data.get('work_name')
             user = request.user
             img = request.FILES['photo']
             UserWorkModel.objects.create(
+                work_name=work_name,
                 user=user,
                 photo=img
             )
             return redirect('account:account')
     else:
-        form = UserPhotoForm()
-    return render(request, 'account/change_profile_photo.html', {'form': form})
+        form = WorkForm()
+    return render(request, 'account/add_work.html', {'form': form})
 
 
 def get_all_current_user_works(request):
@@ -140,7 +142,7 @@ def like_view_service(request, work_id):
         work = UserWorkModel.objects.get(id=work_id)
     except UserWorkModel.DoesNotExist:
         return redirect('account:home')
-    if not(request.user in [com for com in work.liked.all()]):
+    if not(request.user in [user_liked for user_liked in work.liked.all()]):
         print('like')
         work.liked.add(request.user)
         work.save()

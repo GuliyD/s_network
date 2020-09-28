@@ -21,7 +21,7 @@ def create_user_view(request):
     response = base_form_service(request,
                                  form_class=RegistrationForm,
                                  template_path_to_render='account/register.html',
-                                 redirect_to='home',
+                                 redirect_to='account:home',
                                  is_registration=True
                                  )
     return response
@@ -63,7 +63,7 @@ def login_view(request):
 
                                  form_class=LoginForm,
                                  template_path_to_render='account/login.html',
-                                 redirect_to='home'
+                                 redirect_to='account:home'
                                  )
     return response
 
@@ -78,6 +78,7 @@ def add_work_view(request):
 def like_view(request, work_id):
     response = like_view_service(request, work_id)
     return response
+
 
 @login_required
 def comment_view(request, work_id):

@@ -16,6 +16,7 @@
 <p><a href="{% url 'account:add_work' %}">add image</a></p>
 
 {% for work in user.works.all %}
+    <p>{{ work.work_name }}</p>
     <p><img src="{{ work.photo.url }}" width="200"></p>
 {{ work.url }}
 {% endfor %}
