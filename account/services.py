@@ -3,9 +3,7 @@ from django.contrib.auth import authenticate, login
 from .models import ProfileModel, UserWorkModel
 from .forms import UserPhotoForm, WorkForm
 from user.models import User
-
-
-
+from django.core.paginator import Paginator
 
 
 def add_profile_photo_service(request):
@@ -74,12 +72,15 @@ def get_all_current_user_works(request):
 def home_page_service(request):
     works = UserWorkModel.objects.all()
     works_and_likes = get_works_and_likes(request, works)
-    return render(request, 'account/home.html', {'works_and_likes': works_and_likes})
+    paginator = Paginator(works_and_likes, 2)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'account/home.html', {'works_and_likes': page_obj})
 
 
 def get_works_and_likes(request, works):
     users_in_works = [i.liked for i in works]
-    print(users_in_works)
     likes_for_works = list(map(lambda users: 'Unlike' if request.user in users.all() else 'Like', users_in_works))
     works_and_likes = list(zip(works, likes_for_works))
     return works_and_likes

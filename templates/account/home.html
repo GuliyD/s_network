@@ -9,4 +9,19 @@
 <a href="{% url 'account:like' work.id %}">{{ like }}</a>     <h5>{{ work.num_likes }}</h5>
 <p><a href="{% url 'account:comment' work.id %}"> comments </a></p>
 {% endfor %}
+
+
+{% if works_and_likes.has_previous %}
+    <a href="?page=1">first</a>
+    <a href="?page={{ works_and_likes.previous_page_number }}">previous</a>
+{% endif %}
+
+<p>Page {{ works_and_likes.number }} of {{ works_and_likes.paginator.num_pages }}</p>
+
+{% if works_and_likes.has_next %}
+<a href="?page={{ works_and_likes.next_page_number }}">next</a>
+<a href="?page={{ works_and_likes.paginator.num_pages }}">last</a>
+{% endif %}
+
+
 {% endblock %}
