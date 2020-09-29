@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<h2>{{ group.name }}</h2>
+{% for work in works %}
+<p>{{ work.name }}</p>
+<p>{{ work.photo }}</p>
+
+{% endfor %}
+
+
+{% endblock %}

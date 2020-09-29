@@ -10,7 +10,6 @@ class ProfileModel(models.Model):
 class UserWorkModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='works')
     work_name = models.CharField(max_length=200, default='Noname work')
-    photo_name = models.CharField(max_length=60)
     photo = models.ImageField(upload_to='user_works')
     created = models.DateTimeField(auto_now_add=True)
     liked = models.ManyToManyField(User, default=None, blank=True)
@@ -21,6 +20,10 @@ class UserWorkModel(models.Model):
     @property
     def num_likes(self):
         return self.liked.all().count()
+
+    @property
+    def get_tags(self):
+        return self.tags.all()
 
     class Meta:
         ordering = ['-created']
